@@ -1,0 +1,4 @@
+song|artist|album|genre|filePath
+Shoulder Opener #1 - 40 min.|Yoga Download|Power Yoga|Other|/tmp/mp3/class2_591.mp3
+Detox Yoga #1 - 60 min.|YogaDownload - Lisa Richards|Power Vinyasa Yoga|Other|/tmp/mp3/class4_573.mp3
+20 Minutes of Power 1|YogaDownload - Dawnelle|Power Yoga|Other|/tmp/mp3/class1_555.mp3
