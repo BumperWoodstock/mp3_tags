@@ -74,21 +74,29 @@ def hashfile(path,blocksize = 65536):
         hasher.update(buf)
         buf = afile.read(blocksize)
     afile.close()
-    return hasher.haxidigest()
+    return hasher.hexdigest()
 
 def identify_dup_mp3(dirstr):
     dupmp3 = {}
+    current_time = time.time()
+    count = 0
     for root,dirs, files in os.walk(dirstr,onerror=walk_error_handler):
         for name in files:
             if name[len(name)-4:] == ".mp3":
-                file_hash = hashfile(os.path.join(root,name))
+                fname = os.path.join(root,name)
+                file_hash = hashfile(fname)
                 if file_hash in dupmp3:
-                    dupmp3[file_hash] = dupmp3[file_hash] + os.path.join(root,name)
+                    dupmp3[file_hash].append( fname)
                 else:
-                    dupmp3[file_hash] = os.path.join(root,name)
+                    dupmp3[file_hash] = [fname]
+            count = count+1
+            if time.time() - current_time > 120:
+                print("Still Checking "+ str(count) + " files hashed "  )
+                current_time = time.time()
     return dupmp3
 
 def print_dup_mp3(dups_dict):
+
     results = list(filter(lambda x: len(x) > 1,dups_dict.values()))
     if len(results) > 0:
         print("Dups Found")
@@ -96,13 +104,11 @@ def print_dup_mp3(dups_dict):
         print("---------------------")
         for result in results:
             for subresult in result:
-                print('\t\s%s' % subresult)
+                print('\t%s' % subresult)
             print("---------------------")
     else:
-        print('No Dups Found')
-              
-    print("Total mp3 files found = "+str(count))
-    return count
+       print('No Dups Found')
+             
     
 
 if __name__ == '__main__':
@@ -111,6 +117,8 @@ if __name__ == '__main__':
     if sys.argv[1] == "Scan":
         print("scanning now")
         file_count = do_initial_scan_for_mp3s(sys.argv[2])
+    elif sys.argv[1] == "Dups":
+        print_dup_mp3(identify_dup_mp3(sys.argv[2]))
     elif len(sys.argv) < 2:
         print("Insuficient arguments")
         exit
