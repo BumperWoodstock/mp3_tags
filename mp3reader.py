@@ -5,6 +5,7 @@
 from mp3_tagger import MP3File, VERSION_1, VERSION_2, VERSION_BOTH
 import os
 import sys
+import hashlib
 import string
 import time
 #from pathlib import Path
@@ -65,7 +66,44 @@ def write_mp3_tags(fout,targetdir):
 
     f.close()
 
+def hashfile(path,blocksize = 65536):
+    afile = open(path,'rb')
+    hasher = hashlib.md5()
+    buf = afile.read(blocksize)
+    while len(buf) > 0:
+        hasher.update(buf)
+        buf = afile.read(blocksize)
+    afile.close()
+    return hasher.haxidigest()
 
+def identify_dup_mp3(dirstr):
+    dupmp3 = {}
+    for root,dirs, files in os.walk(dirstr,onerror=walk_error_handler):
+        for name in files:
+            if name[len(name)-4:] == ".mp3":
+                file_hash = hashfile(os.path.join(root,name))
+                if file_hash in dupmp3:
+                    dupmp3[file_hash] = dupmp3[file_hash] + os.path.join(root,name)
+                else:
+                    dupmp3[file_hash] = os.path.join(root,name)
+    return dupmp3
+
+def print_dup_mp3(dups_dict):
+    results = list(filter(lambda x: len(x) > 1,dups_dict.values()))
+    if len(results) > 0:
+        print("Dups Found")
+        print("Following are dups")
+        print("---------------------")
+        for result in results:
+            for subresult in result:
+                print('\t\s%s' % subresult)
+            print("---------------------")
+    else:
+        print('No Dups Found')
+              
+    print("Total mp3 files found = "+str(count))
+    return count
+    
 
 if __name__ == '__main__':
     #    main()
