@@ -57,8 +57,8 @@ def write_mp3_tags(fout,targetdir):
             data.append(os.path.join(root,name))
             #try:
             f.write('|'.join(data)+"\n")
-            #except:
-            #   f_errors.write(os.path.join(root,name) + "\n")
+            except:
+               f_errors.write(os.path.join(root,name) + "\n")
             count = count+1
             if time.time() - current_time > 120:
                 print("Successfully read "+str(count) + " out of " + str(total_number_of_mp3) )
