@@ -10,7 +10,7 @@ import string
 import time
 #from pathlib import Path
 
-tags = ["song","artist","album","genre","filePath"]
+tags = ["song","artist","album","genre","track","filePath"]
 
 
 
@@ -51,14 +51,14 @@ def write_mp3_tags(fout,targetdir):
             for tag in tags:
                 if tag != "filePath":
                     try:
-                        data.append(mp3.get_tags()['ID3TagV1'][tag])
+                        data.append(str(mp3.get_tags()['ID3TagV1'][tag]))
                     except:
                         data.append('Not Assigned')
             data.append(os.path.join(root,name))
-            try:
-                f.write('|'.join(data)+"\n")
-            except:
-                f_errors.write(os.path.join(root,name) + "\n")
+            #try:
+            f.write('|'.join(data)+"\n")
+            #except:
+            #   f_errors.write(os.path.join(root,name) + "\n")
             count = count+1
             if time.time() - current_time > 120:
                 print("Successfully read "+str(count) + " out of " + str(total_number_of_mp3) )
